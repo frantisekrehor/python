@@ -25,7 +25,6 @@ def ftp_connect(server, usr, pswd):
 	
 	except IOError as (errno, strerror):
 		print "I/O error(%r): %r" % (errno, strerror)
-		return False
 	
 	print 'Successfully connected to "%s"' % server
 	return conn
