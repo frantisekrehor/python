@@ -22,12 +22,12 @@ def ftp_connect(server, usr, pswd):
 	try:
 		conn = ftplib.FTP(server)
 		conn.login(user = usr, passwd = pswd)
+		
+		print 'Successfully connected to "%s"' % server
+		return conn
 	
-	except IOError as (errno, strerror):
-		print "I/O error(%r): %r" % (errno, strerror)
-	
-	print 'Successfully connected to "%s"' % server
-	return conn
+	except ftplib.all_errors as e:
+		print "ftp error: %s" % e
 		
 	
 def ftp_up(connection, path, data, file_output = None):
@@ -43,13 +43,16 @@ def ftp_up(connection, path, data, file_output = None):
 		# open the file and upload
 		with open(file_output, 'rb') as out:
 			connection.storbinary('STOR ' + file_output, out)
+
+		print 'File "%s" successfully uploaded to "%s"' % (file_output, path)
+		return True
 	
 	except IOError as (errno, strerror):
 		print "I/O error(%r): %r" % (errno, strerror)
 		return False
-    
-	print 'File "%s" successfully uploaded to "%s"' % (file_output, path)
-	return True
+		
+	except ftplib.all_errors as e:
+		print "ftp error: %s" % e
 	
 	
 def ftp_down(connection, path, data, file_output = None):
@@ -65,13 +68,16 @@ def ftp_down(connection, path, data, file_output = None):
 		# open the file for writing and write data from FTP
 		with open(file_output, 'wb') as out:
 			connection.retrbinary('RETR ' + data, out.write)
+		
+		print 'File "%s" successfully downloaded from "%s"' % (file_output, path)
+		return True
 	
 	except IOError as (errno, strerror):
 		print "I/O error(%r): %r" % (errno, strerror)
 		return False
-    
-	print 'File "%s" successfully downloaded from "%s"' % (file_output, path)
-	return True
+		
+	except ftplib.all_errors as e:
+		print "ftp error: %s" % e
 
 
 
