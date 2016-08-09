@@ -6,7 +6,7 @@
 __author__ 		= 'frantisekrehor.cz'
 __email__		= 'hi@frantisekrehor.cz'
 
-#=========================================================================
+#================================================================
 	
 #importing necessary modules for running script
 
@@ -44,7 +44,8 @@ def ftp_up(connection, path, data, file_output = None):
 		with open(file_output, 'rb') as out:
 			connection.storbinary('STOR ' + file_output, out)
 
-		print 'File "%s" successfully uploaded to "%s"' % (file_output, path)
+		print 'File "%s" successfully uploaded to "%s"' 
+			% (file_output, path)
 		return True
 	
 	except IOError as (errno, strerror):
@@ -69,7 +70,8 @@ def ftp_down(connection, path, data, file_output = None):
 		with open(file_output, 'wb') as out:
 			connection.retrbinary('RETR ' + data, out.write)
 		
-		print 'File "%s" successfully downloaded from "%s"' % (file_output, path)
+		print 'File "%s" successfully downloaded from "%s"' 
+			% (file_output, path)
 		return True
 	
 	except IOError as (errno, strerror):
