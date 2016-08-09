@@ -44,7 +44,7 @@ def ftp_up(connection, path, data, file_output = None):
 		with open(file_output, 'rb') as out:
 			connection.storbinary('STOR ' + file_output, out)
 
-		print 'File "%s" successfully uploaded to "%s"' 
+		print 'File "%s" successfully uploaded to "%s"' \
 			% (file_output, path)
 		return True
 	
@@ -70,7 +70,7 @@ def ftp_down(connection, path, data, file_output = None):
 		with open(file_output, 'wb') as out:
 			connection.retrbinary('RETR ' + data, out.write)
 		
-		print 'File "%s" successfully downloaded from "%s"' 
+		print 'File "%s" successfully downloaded from "%s"' \
 			% (file_output, path)
 		return True
 	
