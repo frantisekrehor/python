@@ -54,6 +54,7 @@ def ftp_up(connection, path, data, file_output = None):
 		
 	except ftplib.all_errors as e:
 		print "ftp error: %s" % e
+		retunr False
 	
 	
 def ftp_down(connection, path, data, file_output = None):
