@@ -205,7 +205,7 @@ if __name__ == '__main__':
 		else:
 			print('Info: This could not be booked, let\'s try another...')
 
-	print('Try to change your request... The cheapest flight cannot be booked.')
+	print('Try to change your request... The %r flight cannot be booked.' % method)
 	sys.exit()
 
 
