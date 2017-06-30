@@ -111,16 +111,16 @@ def get_best_flight(flights, method):
 		return get_shortest_flight()
 
 
-def check_flights(booking_token):
+def check_flights(booking):
 	'''
 	Check the price and if the flight can be booked
 	@return - True/False for both 
 	@link - http://docs.skypickerbookingapi1.apiary.io/#reference/check-flights/checkflights/check_flights?console=1
 	'''
-	params = {'v':2,				 # default
-			  'pnum':1,				 # passenger number
-			  'bnum':0,				 # number of bags
-			  'booking_token':booking_token
+	params = {	'v': 2,				 	# default
+			 	'pnum': 1,				# passenger number
+			  	'bnum': 0,				# number of bags
+			  	'booking_token': booking['booking_token']
  	}
 	try:
 		response = requests.get(api_check_booking_url, params=params ).json()
@@ -130,7 +130,7 @@ def check_flights(booking_token):
 	except:
 		raise Exception('Error: something happened when trying to check the flights.')
 
-def save_booking(booking_token):
+def save_booking(booking):
 	'''
 	Save booking
 	@return - True if the booking process was successful
@@ -161,7 +161,7 @@ def save_booking(booking_token):
 		'currency':'CZK',
 		'customerLoginID':'unknown', # loginID for zooz payments
 		'customerLoginName':'unknown', # login name for zooz payments
-		'booking_token':booking_token,
+		'booking_token':booking['booking_token'],
 		'affily':'affil_id', # affil id, can contain any subID string, max length 64
 		'booked_at':'affil_id' # basic affil id, without any subIDs
 	}
@@ -172,7 +172,18 @@ def save_booking(booking_token):
 		response_data = response.json()
 
 		if response.status_code == 200:
+			
 			print('Info: booking is %r with booking number %r.' %(response_data['status'], response_data['pnr']))
+			print('\nBooking information: ', response_data['pnr'])
+			print('=========================================')
+			for r in booking['route']:
+				dTime = datetime.fromtimestamp(float(r['dTime'])).strftime('%c')
+				aTime = datetime.fromtimestamp(float(r['aTime'])).strftime('%c')
+				print ('%s -> %s \t %s -> %s' % (r['flyFrom'], r['flyTo'], dTime, aTime))
+			print('\nDuration to destination: %dh' % (int(booking['duration']['departure'])/3600))
+			print('Duration from destination: %dh' % (int(booking['duration']['return'])/3600))
+			print('=========================================')
+
 			return True
 		else:
 			print('Info: booking could not be booked, let\'s try again...')
@@ -191,15 +202,14 @@ def main():
 	for searching in range(10): # max 10 searching tries
 
 		flights = get_available_flights(arguments)
-		fit = get_best_flight(flights, method)
-		booking_token = fit['booking_token']
+		booking = get_best_flight(flights, method)
 
 		for checking in range(10): # max 10 checking tries for the search
 
-			checked, invalid = check_flights(booking_token)
+			checked, invalid = check_flights(booking)
 
 			if checked and not invalid:
-				book = save_booking(booking_token)
+				book = save_booking(booking)
 				if not book:
 					time.sleep(5)
 					continue	
