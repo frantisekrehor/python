@@ -16,6 +16,7 @@ from datetime import datetime, timedelta
 
 # APIs used
 api_booking_url = 'http://37.139.6.125:8080/booking'
+api_check_booking_url = 'https://booking-api.skypicker.com/api/v0.1/check_flights'
 api_search_url = 'https://api.skypicker.com/flights'
 
 def parse_argv(argv):
@@ -122,7 +123,7 @@ def check_flights(booking_token):
 			  'booking_token':booking_token
  	}
 	try:
-		response = requests.get('https://booking-api.skypicker.com/api/v0.1/check_flights', params=params ).json()
+		response = requests.get(api_check_booking_url, params=params ).json()
 		checked = response['flights_checked']
 		invalid = response['flights_invalid']
 		return checked, invalid
