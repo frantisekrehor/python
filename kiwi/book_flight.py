@@ -1,9 +1,9 @@
 #!/usr/bin/env python
 
-'''booking_flight.py:'''
+'''book_flight.py:'''
 
-__author__ 		= 'frantisekrehor.cz'
-__email__		= 'hi@frantisekrehor.cz'
+__author__ 		= 	'frantisekrehor.cz'
+__email__		= 	'hi@frantisekrehor.cz'
 
 #=========================================================================
 
@@ -213,4 +213,3 @@ def main():
 
 if __name__ == '__main__':
 	main()
-	
