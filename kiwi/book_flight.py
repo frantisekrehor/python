@@ -117,6 +117,8 @@ def check_flights(booking):
 	@return - True/False for both 
 	@link - http://docs.skypickerbookingapi1.apiary.io/#reference/check-flights/checkflights/check_flights?console=1
 	'''
+	print('Info: checking price and validity of the flight.')
+
 	params = {	'v': 2,				 	# default
 			 	'pnum': 1,				# passenger number
 			  	'bnum': 0,				# number of bags
@@ -136,6 +138,8 @@ def save_booking(booking):
 	@return - True if the booking process was successful
 	@link - http://docs.skypickerbookingapi1.apiary.io/#reference/save-booking/savebooking/save_booking?console=1
 	'''
+	print('Info: trying to make a booking.')
+
 	payload = {
 		'lang':'en', # user language
 		'bags':0, # number of bags
