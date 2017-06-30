@@ -181,8 +181,10 @@ def save_booking(booking_token):
 		raise Exception('Error: something happend when trying to save the booking.')
 
 
-
-if __name__ == '__main__':
+def main():
+	'''
+	Main function
+	'''
 	arguments, method = parse_argv(sys.argv)
 	
 	for searching in range(10): # max 10 searching tries
@@ -209,6 +211,6 @@ if __name__ == '__main__':
 	sys.exit()
 
 
-
-
-
+if __name__ == '__main__':
+	main()
+	
