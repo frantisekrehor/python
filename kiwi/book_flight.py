@@ -126,9 +126,8 @@ def check_flights(booking):
  	}
 	try:
 		response = requests.get(api_check_booking_url, params=params ).json()
-		checked = response['flights_checked']
-		invalid = response['flights_invalid']
-		return checked, invalid
+		return response
+
 	except:
 		raise Exception('Error: something happened when trying to check the flights.')
 
@@ -180,12 +179,17 @@ def save_booking(booking):
 			print('Info: booking is %r with booking number %r.' %(response_data['status'], response_data['pnr']))
 			print('\nBooking information: ', response_data['pnr'])
 			print('=========================================')
+
 			for r in booking['route']:
 				dTime = datetime.fromtimestamp(float(r['dTime'])).strftime('%c')
 				aTime = datetime.fromtimestamp(float(r['aTime'])).strftime('%c')
-				print ('%s -> %s \t %s -> %s' % (r['flyFrom'], r['flyTo'], dTime, aTime))
-			print('\nDuration to destination: %dh' % (int(booking['duration']['departure'])/3600))
-			print('Duration from destination: %dh' % (int(booking['duration']['return'])/3600))
+				print ('%s -> %s (%s %s) \t %s -> %s' % 
+					(r['flyFrom'], r['flyTo'], r['airline'], r['flight_no'], dTime, aTime))
+			
+			print('\nTotal price: %d EUR' % (booking['price'])),
+			print('Duration to destination: %dh' % (booking['duration']['departure']/3600)),
+			if booking['duration']['return']>0:
+				print('Duration from destination: %dh' % (booking['duration']['return']/3600))
 			print('=========================================')
 
 			return True
@@ -203,24 +207,24 @@ def main():
 	'''
 	arguments, method = parse_argv(sys.argv)
 	
-	for searching in range(10): # max 10 searching tries
-
+	for searching in range(5): # max 5 searching
 		flights = get_available_flights(arguments)
 		booking = get_best_flight(flights, method)
 
-		for checking in range(10): # max 10 checking tries for the search
+		for checking in range(5): # max 5 checking
+			booking_checked = check_flights(booking)
 
-			checked, invalid = check_flights(booking)
-
-			if checked and not invalid:
-				book = save_booking(booking)
-				if not book:
-					time.sleep(5)
+			if booking_checked['flights_checked'] and not booking_checked['flights_invalid']:
+				booked = save_booking(booking)
+				
+				if not booked:
 					continue	
 				else:
 					sys.exit()
-		else:
-			print('Info: This could not be booked, let\'s try another...')
+			else:
+				time.sleep(5)
+
+		print('Info: This flight can not be booked, let\'s search again...')
 
 	print('Try to change your request... The %r flight cannot be booked.' % method)
 	sys.exit()
