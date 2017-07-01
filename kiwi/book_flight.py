@@ -113,7 +113,8 @@ def get_best_flight(flights, method):
 
 
 	if len(flights) == 0:
-		raise Exception ('Error: no flights found.')
+		print('Info: No flights found. Try to change dates or airports.')
+		sys.exit()
 
 	if method == 'cheapest':
 		print('Info: looking for the cheapest flight with a method.')
