@@ -49,7 +49,7 @@ def parse_argv(argv):
 	else:
 		method =  'one-way'
 
-	print('Info: Configuration %r and with method %r' % (arguments,method))
+	print('Info: Configuration %s and with method %s' % (arguments,method))
 
 	return arguments, method
 
@@ -69,7 +69,7 @@ def get_available_flights(arguments):
 
 	try:
 		response = requests.get(api_search_url, params=params).json()
-		print('Info: flights found: %r' % response['_results'])
+		print('Info: %s flights found' % response['_results'])
 		return response['data']
 	except:
 		raise Exception('Error: something happend when trying to get the flights from the API.')
@@ -87,29 +87,45 @@ def get_best_flight(flights, method):
 				cheapest_flight = flight
 		return cheapest_flight
 
-	def get_shortest_flight():
+	def get_shortest_flight(max_price = None):
 		shortest_flight = None
 
-		for flight in flights:
-			if shortest_flight is None or flight['duration']['total'] < shortest_flight['duration']['total']:
-				shortest_flight = flight
+		if max_price is None:
+			for flight in flights:
+				if shortest_flight is None or flight['duration']['total'] < shortest_flight['duration']['total']:
+					shortest_flight = flight
+		else:
+			for flight in [f for f in flights if f['price'] <= max_price]:
+				if shortest_flight is None or flight['duration']['total'] < shortest_flight['duration']['total']:
+					shortest_flight = flight					
 		return shortest_flight
+
+	def get_recommended_flight():
+		recommended_flight = None
+
+		price_shortest = get_shortest_flight()['price']
+		price_cheapest = get_cheapest_flight()['price']
+		if price_shortest/price_cheapest > 2:
+			recommended_flight = get_shortest_flight(price_shortest/2)
+		else:
+			recommended_flight = get_shortest_flight()
+		return recommended_flight
 
 
 	if len(flights) == 0:
 		raise Exception ('Error: no flights found.')
 
 	if method == 'cheapest':
-		print('Info: finding a best flight with a method %r.' % (method))
+		print('Info: looking for the cheapest flight with a method.')
 		return get_cheapest_flight()
 
-	if method in ['shortest', 'return', 'one-way']:
-		if method in ['return', 'one-way']:
-			print('Info: finding a best fit with a method %r. I also pick the flight with a shortest duration.' % (method))
-		if method == 'shortest':
-			print('Info: finding a best fit with a method %r.' % (method))
+	if method =='shortest':
+		print('Info: looking for the shortest flight.')
 		return get_shortest_flight()
 
+	if method in ['one-way', 'return']:
+		print('Info: looking for the %s flight with optimal price and duration.' % (method))
+		return get_recommended_flight()
 
 def check_flights(booking):
 	'''
@@ -176,7 +192,7 @@ def save_booking(booking):
 
 		if response.status_code == 200:
 			
-			print('Info: booking is %r with booking number %r.' %(response_data['status'], response_data['pnr']))
+			print('Info: booking is %s with booking number %s.' %(response_data['status'], response_data['pnr']))
 			print('\nBooking information: ', response_data['pnr'])
 			print('=========================================')
 
@@ -226,7 +242,7 @@ def main():
 
 		print('Info: This flight can not be booked, let\'s search again...')
 
-	print('Try to change your request... The %r flight cannot be booked.' % method)
+	print('Try to change your request... The %s flight cannot be booked.' % method)
 	sys.exit()
 
 
