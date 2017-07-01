@@ -115,16 +115,14 @@ def get_best_flight(flights, method):
 	if len(flights) == 0:
 		print('Info: No flights found. Try to change dates or airports.')
 		sys.exit()
-
+	
 	if method == 'cheapest':
 		print('Info: looking for the cheapest flight with a method.')
 		return get_cheapest_flight()
-
-	if method =='shortest':
+	elif method =='shortest':
 		print('Info: looking for the shortest flight.')
 		return get_shortest_flight()
-
-	if method in ['one-way', 'return']:
+	else:
 		print('Info: looking for the %s flight with optimal price and duration.' % (method))
 		return get_recommended_flight()
 
